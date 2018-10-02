@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="487.0" prefWidth="370.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dialogue.Dialogue">
+   <children>
+      <Pane layoutX="16.0" layoutY="41.0" prefHeight="423.0" prefWidth="334.0" style="-fx-background-color: grey; -fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: lightgrey; -fx-border-width: 8;">
+         <children>
+            <Button layoutX="252.0" layoutY="375.0" mnemonicParsing="false" onAction="#green" prefHeight="29.0" prefWidth="68.0" style="-fx-background-color: lightgrey;" text="OK" textFill="#1f0b83">
+               <font>
+                  <Font name="Lucida Handwriting Italic" size="12.0" />
+               </font>
+            </Button>
+            <Button layoutX="16.0" layoutY="375.0" mnemonicParsing="false" onAction="#red" prefHeight="29.0" prefWidth="68.0" style="-fx-background-color: lightgrey;" text="Cancel" textFill="#1f0b83">
+               <font>
+                  <Font name="Lucida Handwriting Italic" size="12.0" />
+               </font>
+            </Button>
+            <Label fx:id="titleLabel" layoutX="19.0" layoutY="79.0" prefHeight="69.0" prefWidth="301.0" style="-fx-label-padding: 10;" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="msgLabel" layoutX="22.0" layoutY="259.0" prefHeight="17.0" prefWidth="294.0" style="-fx-background-color: lightgrey; -fx-background-radius: 5; -fx-label-padding: 5;" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="iconView" fitHeight="80.0" fitWidth="93.0" layoutX="223.0" layoutY="161.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </Pane>
+   </children>
+</Pane>

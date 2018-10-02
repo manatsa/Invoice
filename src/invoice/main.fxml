@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="559.0" prefWidth="454.0" style="-fx-background-radius: 10; -fx-border-color: black; -fx-border-radius: 2; -fx-border-radius: 10; -fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="invoice.MainController">
+   <children>
+      <ImageView fitHeight="76.0" fitWidth="69.0" layoutX="21.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@h1.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="108.0" layoutY="37.0" style="-fx-text-fill: hotpink;" text="HAM Instrumentation &amp; Electrical Invoice" underline="true">
+         <font>
+            <Font name="System Bold Italic" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="33.0" layoutY="121.0" text="Invoice Date :">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </Label>
+      <DatePicker fx:id="invDate" editable="false" layoutX="117.0" layoutY="116.0" prefHeight="25.0" prefWidth="298.0" promptText="choose date from drop down" style="-fx-font-size: 10; -fx-background-radius: 5; -fx-font-weight: bold; -fx-alignment: center;" />
+      <TextField fx:id="custText" layoutX="117.0" layoutY="146.0" prefHeight="15.0" prefWidth="298.0" promptText="enter name of cutomer or client" style="-fx-background-radius: 5;">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="33.0" layoutY="150.0" text="Customer :">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </Label>
+      <TextField fx:id="taskText" layoutX="117.0" layoutY="180.0" prefHeight="15.0" prefWidth="298.0" promptText="enter the task " style="-fx-background-radius: 5;">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </TextField>
+      <TitledPane alignment="CENTER" layoutX="22.0" layoutY="211.0" prefHeight="185.0" prefWidth="411.0" text="Add Items">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="136.0" prefWidth="409.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="7.0" text="Name :">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="14.0" layoutY="29.0" text="Type :">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="14.0" layoutY="56.0" text="Quantity :">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="14.0" layoutY="82.0" text="Price :">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="itName" layoutX="104.0" layoutY="3.0" prefHeight="23.0" prefWidth="287.0" promptText="enter name of item" style="-fx-background-radius: 5;">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="itType" layoutX="104.0" layoutY="33.0" prefHeight="23.0" prefWidth="287.0" promptText="enter type of item" style="-fx-background-radius: 5;">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="itQnty" layoutX="104.0" layoutY="60.0" prefHeight="23.0" prefWidth="287.0" promptText="enter item quantity " style="-fx-background-radius: 5;">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="itPrice" layoutX="104.0" layoutY="86.0" prefHeight="23.0" prefWidth="287.0" promptText="enter item unity price" style="-fx-background-radius: 5;">
+                     <font>
+                        <Font name="System Bold" size="10.0" />
+                     </font>
+                  </TextField>
+                  <Button layoutX="323.0" layoutY="115.0" mnemonicParsing="false" onAction="#addItem" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: lightblue; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-width: 2;" text="Add Item" />
+                  <Button layoutX="14.0" layoutY="115.0" mnemonicParsing="false" onAction="#clear" prefHeight="33.0" prefWidth="79.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: lightblue; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-width: 2;" text="Clear" />
+                  <Button layoutX="150.0" layoutY="115.0" mnemonicParsing="false" onAction="#RemoveAllItems" prefHeight="33.0" prefWidth="134.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: lightblue; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-width: 2;" text="Remove All Items" />
+               </children>
+            </AnchorPane>
+        </content>
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </TitledPane>
+      <Label layoutX="33.0" layoutY="184.0" text="Task Involved :">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </Label>
+      <Label layoutX="26.0" layoutY="458.0" text="Invoiced By :">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </Label>
+      <TextField fx:id="contactText" layoutX="110.0" layoutY="424.0" prefHeight="15.0" prefWidth="298.0" promptText="enter contact phone number" style="-fx-background-radius: 5;">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="invText" layoutX="110.0" layoutY="454.0" prefHeight="15.0" prefWidth="298.0" promptText="enter name of invoicing personel " style="-fx-background-radius: 5;">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </TextField>
+      <Button defaultButton="true" layoutX="341.0" layoutY="499.0" mnemonicParsing="false" onAction="#preview" prefHeight="33.0" prefWidth="79.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: hotpink; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-width: 2;" text="Preview" />
+      <Button layoutX="26.0" layoutY="499.0" mnemonicParsing="false" onAction="#cancel" prefHeight="33.0" prefWidth="79.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: hotpink; -fx-border-radius: 5; -fx-background-radius: 5; -fx-border-width: 2;" text="Close" />
+      <Label layoutX="26.0" layoutY="428.0" text="Contact Phone :">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>
