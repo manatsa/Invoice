@@ -14,9 +14,13 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.Set;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -30,7 +34,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -39,6 +46,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -46,13 +54,29 @@ import javafx.stage.Stage;
  */
 public class MainController implements Initializable{
 
-    Map<String,Item> map=new HashMap<>();
+    double grandTot=0.00;
+    double total=0.00;
+    double vattotal=0.00;
+    double vat=0.00;
+    NumberFormat form = new DecimalFormat("#0.00"); 
+    Map<String,ItemBean> map=new HashMap<>();
     ArrayList<Double> subs=new ArrayList<>();
     @FXML
-    TextField custText,itName,itType,itQnty,itPrice,taskText,invText,contactText;
+    TextField custText,itName,itType,itQnty,itPrice,taskText,invText,contactText,vatText,vatNumText,addText;
+    
+    @FXML
+    TableView<ItemBean> itemsTable;
     
     @FXML
     DatePicker invDate;
+    
+    @FXML private TableColumn<ItemBean, String> nameCol;
+    @FXML private TableColumn<ItemBean, String> typeCol;
+    @FXML private TableColumn<ItemBean, String> qntyCol;
+    @FXML private TableColumn<ItemBean, String> unitCol;
+    @FXML private TableColumn<ItemBean, String> totCol;
+    
+    
     
     @FXML
     public void cancel()
@@ -86,12 +110,26 @@ public class MainController implements Initializable{
        
        if(name.length()>0 && qnty.length()>0 && price.length()>0)
        {
-           map.put(name, new Item(name, type, qnty, price));
+           ItemBean item=new ItemBean(name, type, qnty, price);
+           map.put(name, item);
            Dialogue.displayDialog("ITEM INSERT", "Your Item was added", "The item was successfully added to the list!", Type.INFO);
            itName.setText("");
            itType.setText("");
            itQnty.setText("");
            itPrice.setText("");
+           Double subt=Double.parseDouble(item.getPrice())*Double.parseDouble(item.getQnty());
+           subs.add(subt);
+           total=Double.parseDouble(calculateTotal());
+           vattotal=Double.parseDouble(calculateVat());
+           grandTot=Double.parseDouble(calculateGrandTotal());
+           ObservableList<ItemBean> items=FXCollections.observableArrayList();
+           for(ItemBean it: map.values()){
+               items.add(it);
+           }
+           //itemsTable.getItems().clear();
+           itemsTable.setItems(items);
+           
+        //System.err.println("Total :"+total+"\nVat :"+vattotal+"\nGrandTotal :"+grandTot);
        }else{
            Dialogue.displayDialog("MISSING INFO", "Required info is missing!", "Please fill all required fields", Type.ERROR);
        }
@@ -102,23 +140,36 @@ public class MainController implements Initializable{
     {
         map.clear();
         subs.clear();
+        grandTot=0.00;
+        total=0.00;
+        vattotal=0.00;
     }
     
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
        invDate.setValue(LocalDate.now());
+       System.out.println("Value : "+nameCol.getId());
+       nameCol.setCellValueFactory(new PropertyValueFactory("name"));
+       typeCol.setCellValueFactory(new PropertyValueFactory("type"));
+       qntyCol.setCellValueFactory(new PropertyValueFactory("qnty"));
+       unitCol.setCellValueFactory(new PropertyValueFactory("price"));
+       totCol.setCellValueFactory(new PropertyValueFactory("tprice"));
     }
 
     private void doPreview() {
      Date date=null;
+     
      try{
         date=Date.valueOf(invDate.getValue());
         String customer=custText.getText();
         String contact=contactText.getText();
         String invoicer=invText.getText();
         String task=taskText.getText();
-        
+        String vattext=vatText.getText();
+        String vatnum=vatNumText.getText();
+        vat=Double.parseDouble(vattext.trim());
+        System.err.println("Vat Text:"+vat);
         if(customer.length()>0 && task.length()>0 && invoicer.length()>0 && contact.length()>0)
         {
             VBox dummy=new VBox();
@@ -145,6 +196,11 @@ public class MainController implements Initializable{
             
             Label dateLb=new Label("Date");
             dateLb.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
+            Label vatNumLb=new Label("VAT Number");
+            vatNumLb.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
+            Label addLb=new Label("Cust Address");
+            addLb.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
+            
             Label custLb=new Label("Customer");
             custLb.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
             Label tasklb=new Label("Task Involved");
@@ -155,25 +211,36 @@ public class MainController implements Initializable{
             custVal.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
             Label taskVal=new Label(task);
             taskVal.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
+            Label vatsVal=new Label(vatnum);
+            vatsVal.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
+            Label addVal=new Label(addText.getText());
+            addVal.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
             
             grid.add(dateLb, 0, 0);
             grid.add(new Label(" : "), 1, 0);
             grid.add(dateVal, 2, 0);
-            grid.add(custLb, 0, 1);
+            grid.add(vatNumLb, 0, 1);
             grid.add(new Label(" : "), 1, 1);
-            grid.add(custVal, 2, 1);
-            grid.add(tasklb, 0, 3);
+            grid.add(vatsVal, 2, 1);
+            
+            grid.add(custLb, 0, 2);
+            grid.add(new Label(" : "), 1, 2);
+            grid.add(custVal, 2, 2);
+            grid.add(addLb, 0, 3);
             grid.add(new Label(" : "), 1, 3);
-            grid.add(taskVal, 2, 3);
+            grid.add(addVal, 2, 3);
+            grid.add(tasklb, 0, 5);
+            grid.add(new Label(" : "), 1, 5);
+            grid.add(taskVal, 2, 5);
             
             Label itemsLb=new Label("ITEMS");
             itemsLb.setStyle("-fx-font-weight:bold;-fx-font-size:12;");
-            grid.add(itemsLb, 0, 4);
+            grid.add(itemsLb, 0, 6);
             int size=5;
             Set<String> keys=map.keySet();
             for(int a=0;a<map.size();a++)
             {
-                Item item=map.get(keys.toArray()[a].toString());
+                ItemBean item=map.get(keys.toArray()[a].toString());
                 Label qntlb=new Label(item.getQnty()+" x");
                 qntlb.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
                 Label typlb=new Label(item.getType());
@@ -183,26 +250,48 @@ public class MainController implements Initializable{
                 Label priclb=new Label("at "+item.getPrice());
                 priclb.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
                 Double subt=Double.parseDouble(item.getPrice())*Double.parseDouble(item.getQnty());
-                subs.add(subt);
+                //subs.add(subt);
                 NumberFormat form = new DecimalFormat("#0.00");
                 String sub=form.format(subt);
                 Label totlb=new Label("= R"+sub);
                 totlb.setStyle("-fx-font-weight:bold;-fx-font-size:12;");
-                grid.add(qntlb, 0, a+5);
-                grid.add(typlb, 1, a+5);
-                grid.add(namlb, 2, a+5);
-                grid.add(priclb, 3, a+5);
-                grid.add(totlb, 4, a+5);
+                grid.add(qntlb, 0, a+7);
+                grid.add(typlb, 1, a+7);
+                grid.add(namlb, 2, a+7);
+                grid.add(priclb, 3, a+7);
+                grid.add(totlb, 4, a+7);
                 size+=1;
             }
+            Label totallb=new Label("Sub Total");
+            totallb.setStyle("-fx-font-weight:bold;-fx-font-size:12;-fx-text-fill:red;");
+            Label totalVal=new Label("R"+form.format(total));
+            totalVal.setStyle("-fx-font-weight:bold;-fx-font-size:12;-fx-text-fill:red;-fx-border-color: red,transparent;-fx-border-width: 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0 ;-fx-border-style:solid;-fx-border-insets: 0 0 1 0, 0 0 2 0, 0 0 3 0, 0 0 4 0;");
+            
+            grid.add(totallb, 0, size+2);
+            grid.add(new Label(" : "), 1, size+2);
+            grid.add(totalVal, 2, size+2);
+            
+            
+            
+            Label vatlb=new Label("Vat("+form.format(vat)+"%)");
+            vatlb.setStyle("-fx-font-weight:bold;-fx-font-size:11;-fx-text-fill:red;");
+            Label vatVal=new Label("R"+ form.format(vattotal));
+            vatVal.setStyle("-fx-font-weight:bold;-fx-font-size:11;-fx-text-fill:red;-fx-border-color: transparent;-fx-border-width: 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0 ;-fx-border-style:solid;-fx-border-insets: 0 0 1 0, 0 0 2 0, 0 0 3 0, 0 0 4 0;");
+            
+            grid.add(vatlb, 0, size+3);
+            grid.add(new Label(" : "), 1, size+3);
+            grid.add(vatVal, 2, size+3);
+            
+            
             Label grandlb=new Label("GRAND TOTAL");
+             
             grandlb.setStyle("-fx-font-weight:bold;-fx-font-size:14;-fx-text-fill:red;");
-            Label grandVal=new Label("R"+calculateGrandTotal());
+            Label grandVal=new Label("R"+form.format(grandTot));
             grandVal.setStyle("-fx-font-weight:bold;-fx-font-size:14;-fx-text-fill:red;-fx-border-color: red, transparent, red,transparent;-fx-border-width: 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0 ;-fx-border-style:solid;-fx-border-insets: 0 0 1 0, 0 0 2 0, 0 0 3 0, 0 0 4 0;");
             
-            grid.add(grandlb, 0, size+2);
-            grid.add(new Label(" : "), 1, size+2);
-            grid.add(grandVal, 2, size+2);
+            grid.add(grandlb, 0, size+4);
+            grid.add(new Label(" : "), 1, size+4);
+            grid.add(grandVal, 2, size+4);
             
             
             Label contlb=new Label("Contact");
@@ -214,12 +303,12 @@ public class MainController implements Initializable{
             Label personVal=new Label(invoicer);
             personVal.setStyle("-fx-font-weight:bold;-fx-font-size:10;");
             
-            grid.add(contlb, 0, size+4);
-            grid.add(new Label(" : "), 1, size+4);
-            grid.add(contVal, 2, size+4);
-            grid.add(person, 0, size+5);
-            grid.add(new Label(" : "), 1, size+5);
-            grid.add(personVal, 2, size+5);
+            grid.add(contlb, 0, size+6);
+            grid.add(new Label(" : "), 1, size+6);
+            grid.add(contVal, 2, size+6);
+            grid.add(person, 0, size+7);
+            grid.add(new Label(" : "), 1, size+7);
+            grid.add(personVal, 2, size+7);
             
             
             Stage stage=new Stage();
@@ -276,20 +365,44 @@ public class MainController implements Initializable{
         }
     }  
 
-    private String calculateGrandTotal() {
+  private String calculateVat() {
+        double vattotals=0.00;
+        System.err.println("total : "+total+"/t vat :"+vat);
+        vattotals=(total*vat)/100;
+        
+        return form.format(vattotals);
+        
+    }
+  
+    private String calculateTotal() {
         double total=0.00;
         for(double sub:subs)
         {
             total+=sub;
         }
         total+=0.001;
-        /*DecimalFormat df = new DecimalFormat("#.##");
-        DecimalFormat df1 = new DecimalFormat("#.#0");
-        DecimalFormat df2 = new DecimalFormat("#.00");*/
-        NumberFormat form = new DecimalFormat("#0.00"); 
-        
+       
         return form.format(total);
         
+    }
+    
+    private String calculateGrandTotal() {
+        
+        double grTotal=total+vattotal;
+        
+        return form.format(grTotal);
+        
+    }
+    
+    
+    @FXML
+    private double onVatChanged()
+    {
+        double vt=0.0;
+        
+        vat=Double.parseDouble(vatText.getText().trim());
+        System.err.println("VAT NOW IS :"+vat);
+        return vat;
     }
     
 }
